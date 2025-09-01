@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Polyfill.io ES6 POC</title>
+
+  <!-- External polyfill (requested) -->
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6" crossorigin="anonymous"></script>
+
+  <!-- Optional Fallback -->
+  <script>
+    (function () {
+      function injectFallback() {
+        var s = document.createElement('script');
+        s.src = 'https://cdnjs.cloudflare.com/ajax/libs/core-js/3.37.1/minified.min.js';
+        s.crossOrigin = 'anonymous';
+        document.head.appendChild(s);
+      }
+      window.addEventListener('error', function (e) {
+        var t = e && e.target;
+        if (t && t.tagName === 'SCRIPT' && /polyfill\.io/.test(t.src)) {
+          injectFallback();
+        }
+      }, true);
+      setTimeout(function () {
+        if (typeof Promise === 'undefined' || typeof Array.from === 'undefined') {
+          injectFallback();
+        }
+      }, 2000);
+    })();
+  </script>
+
+  <style>
+    :root { color-scheme: light dark; }
+    body { font-family: system-ui, sans-serif; margin: 0; background: linear-gradient(135deg, #eceff1, #f5f5f5); }
+    header { background: #2d3748; color: #fff; padding: 2rem; text-align: center; }
+    header h1 { margin: 0; font-size: 2rem; }
+    .container { max-width: 900px; margin: -40px auto 40px; padding: 20px; }
+    .card { border-radius: 20px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); background: #fff; margin-bottom: 24px; }
+    h2 { font-size: 1.5rem; margin-top: 0; }
+    pre { overflow: auto; border-radius: 12px; padding: 16px; background: #f9fafb; font-size: 0.9rem; }
+    .badge { display: inline-block; padding: 6px 12px; border-radius: 999px; font-size: 0.85rem; background: #edf2f7; }
+    footer { text-align: center; font-size: 0.9rem; color: #718096; padding: 20px; }
+    .poc { font-weight: bold; color: #e53e3e; font-size: 1.2rem; text-align: center; margin-bottom: 16px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Polyfill.io ES6 POC</h1>
+    <p>Menguji pemuatan polyfill ES6 pada browser</p>
+  </header>
+
+  <div class="container">
+    <div class="card">
+      <div class="poc">⚠️ Proof of Concept (POC)</div>
+      <h2>Status Fitur</h2>
+      <div id="status" class="badge">Memeriksa fitur…</div>
+      <pre id="features">(menunggu)</pre>
+    </div>
+
+    <div class="card">
+      <h2>Demo Kode ES6</h2>
+      <pre id="demo">(menunggu)</pre>
+    </div>
+  </div>
+
+  <footer>
+    © 2025 Polyfill Demo · Dibuat untuk keperluan uji coba (POC)
+  </footer>
+
+  <script>
+    (function () {
+      var $ = function(id){ return document.getElementById(id); };
+      function renderFeatures() {
+        var checks = {
+          'Promise': typeof Promise !== 'undefined',
+          'fetch': typeof fetch !== 'undefined',
+          'Array.from': typeof Array.from === 'function',
+          'Array.prototype.includes': typeof Array.prototype.includes === 'function',
+          'Object.assign': typeof Object.assign === 'function',
+          'String.prototype.startsWith': typeof ''.startsWith === 'function',
+        };
+        $('features').textContent = JSON.stringify(checks, null, 2);
+        $('status').textContent = 'Selesai cek';
+      }
+
+      function runES6Demo() {
+        try {
+          const items = ['Hello', 'Polyfill', 'POC'];
+          const shout = items.map(w => w.toUpperCase()).join(' ');
+          const set = new Set([1,2,2,3]);
+          const obj = Object.assign({}, { when: new Date().toISOString(), nums: Array.from(set) });
+          $('demo').textContent = `${shout}!\n\nData: ${JSON.stringify(obj, null, 2)}`;
+        } catch (e) {
+          $('demo').textContent = 'Gagal menjalankan contoh ES6: ' + (e && e.message ? e.message : e);
+        }
+      }
+
+      setTimeout(function(){
+        renderFeatures();
+        runES6Demo();
+      }, 300);
+    })();
+  </script>
+</body>
+</html>
